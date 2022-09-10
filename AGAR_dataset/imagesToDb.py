@@ -1,22 +1,33 @@
 import numpy as np
 import pandas as pd
 import cv2 as cv2
-import os
+import os as os
 from skimage import io
 from glob import glob   
 from PIL import Image 
 import matplotlib.pylab as plt
     
+def load(folder):
+    images = []
+    for filename in os.listdir(folder):
+        if filename.endswith(".jpg"):
+            img = cv2.imread(os.path.join(folder, filename))
+            if img is not None:
+                images.append(img)           
+    return images
 
-imagem = cv2.imread("349.jpg")
-imagem = cv2.resize(imagem, (800,800))
-cv2.imshow('imagem', imagem)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+root = 'C:/Users/User/Documents/GitHub/Math2237/PDI_article/AGAR_dataset/'
+path1 = os.path.abspath('C:/Users/User/Documents/GitHub/Math2237/PDI_article/AGAR_dataset/higher-resolution-bright/*.jpg')
+path2 = os.path.abspath('C:/Users/User/Documents/GitHub/Math2237/PDI_article/AGAR_dataset/higher-resolution-dark/*.jpg')
+path3 = os.path.abspath('C:/Users/User/Documents/GitHub/Math2237/PDI_article/AGAR_dataset/higher-resolution-vague/*.jpg')
+path4 = os.path.abspath('C:/Users/User/Documents/GitHub/Math2237/PDI_article/AGAR_dataset/lower-resolution/*.jpg')
+folder = os.path.join(path1, path2, path3, path4)
 
-color = ('r','g','b')
-for i,col in enumerate(color):
-    hist = cv2.calcHist([imagem],[i],None,[256],[0,256])
-    plt.plot(hist,color = col)
-    plt.xlim([0,256])
-plt.show()
+folders = [os.path.join(root, x) for x in ('higher-resolution-bright', 'higher-resolution-dark', 'higher-resolution-vague', 'lower-resolution')]
+all_images = [img for folder in folders for img in load(folder)]
+
+for i in all_images:
+    resized = cv2.resize(i, (1280,720))
+    cv2.imshow("img", resized)
+    cv2.waitKey(50)
+
